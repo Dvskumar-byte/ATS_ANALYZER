@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS ANALYZER | Minimalist Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --brand-primary: #000000;
+            --brand-secondary: #4b5563;
+            --bg-main: #ffffff;
+            --border-light: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: #000000;
+        }
+
+        .step-active { color: #000000; border-color: #000000; }
+        .step-inactive { color: #94a3b8; border-color: #e2e8f0; }
+
+        .pro-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pro-panel:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-circle {
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .btn-primary {
+            background: #000000;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #1f2937;
+            transform: translateY(-1px);
+        }
+
+        /* Drag and Drop styles */
+        .drag-over {
+            border-color: #000000 !important;
+            background-color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-bolt text-white text-lg"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tight leading-none">ATS <span class="text-slate-400">ANALYZER</span></span>
+                    <span class="text-[10px] text-slate-400 font-medium tracking-wide mt-1 uppercase">Get your ATS score in a flash and boost your confidence in a secure way..!</span>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#" class="hover:text-black transition-colors">How it works</a>
+                <a href="#" class="hover:text-black transition-colors">SaaS Pricing</a>
+                <button class="border border-black text-black px-5 py-2 rounded-lg hover:bg-black hover:text-white transition-all">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        
+        <!-- Stepper -->
+        <div class="flex items-center justify-center mb-16">
+            <div class="flex items-center w-full max-w-lg">
+                <div class="flex flex-col items-center flex-1">
+                    <div id="step-1-circle" class="w-10 h-10 rounded-full border-2 flex items-center justify-center mb-2 step-active bg-slate-50">
+                        <i class="fa-solid fa-1 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Documents</span>
+                </div>
+                <div class="h-[1px] flex-1 bg-slate-200 mx-2"></div>
+                <div class="flex flex-col items-center flex-1">
+                    <div id="step-2-circle" class="w-10 h-10 rounded-full border-2 flex items-center justify-center mb-2 step-inactive">
+                        <i class="fa-solid fa-2 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Analysis</span>
+                </div>
+                <div class="h-[1px] flex-1 bg-slate-200 mx-2"></div>
+                <div class="flex flex-col items-center flex-1">
+                    <div id="step-3-circle" class="w-10 h-10 rounded-full border-2 flex items-center justify-center mb-2 step-inactive">
+                        <i class="fa-solid fa-3 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Review</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            
+            <!-- Left: Inputs -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="pro-panel rounded-2xl p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500">
+                            Data Configuration
+                        </h3>
+                        <!-- Updated New Scan Button -->
+                        <button id="new-scan-btn" onclick="resetUI()" disabled class="px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50/50">
+                            <i class="fa-solid fa-rotate-left mr-1.5"></i> New Scan
+                        </button>
+                    </div>
+
+                    <!-- File Drop -->
+                    <div class="space-y-4 mb-6">
+                        <label class="block text-xs font-bold text-slate-700 uppercase">1. Upload Resume</label>
+                        <div id="drop-zone" class="relative group cursor-pointer transition-all">
+                            <input type="file" id="resume-input" accept=".pdf" class="hidden">
+                            <div id="drop-zone-content" class="border border-slate-200 group-hover:border-black rounded-xl p-8 text-center transition-all bg-slate-50/50">
+                                <i class="fa-solid fa-file-pdf text-xl mb-3 text-slate-400 group-hover:text-black"></i>
+                                <h4 id="file-name" class="text-sm font-medium text-slate-600 text-ellipsis overflow-hidden">Drag or click for PDF</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JD Input -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">2. Job Description</label>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">(Optional)</span>
+                        </div>
+                        <textarea id="jd-input" rows="5" 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:border-black outline-none transition-all placeholder:text-slate-400 text-sm custom-scrollbar"
+                            placeholder="Paste requirements for a targeted match, or leave blank for a general review..."></textarea>
+                    </div>
+
+                    <button id="analyze-btn" class="w-full mt-8 btn-primary font-bold py-4 rounded-xl flex items-center justify-center gap-3">
+                        <span id="btn-text">Execute Analysis</span>
+                        <div id="btn-loader" class="hidden animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></div>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-4 px-6 py-4 border border-slate-100 rounded-xl">
+                    <i class="fa-solid fa-lock text-slate-400"></i>
+                    <p class="text-[11px] text-slate-500 leading-tight">Secure FAANG-grade encryption. Data is non-persistent and cleared after analysis.</p>
+                </div>
+            </div>
+
+            <!-- Right: Display -->
+            <div class="lg:col-span-7">
+                
+                <!-- Initial State -->
+                <div id="placeholder-view" class="pro-panel rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px] bg-slate-50/30 border-dashed">
+                    <i class="fa-solid fa-layer-group text-4xl text-slate-200 mb-6"></i>
+                    <h2 class="text-xl font-bold mb-2">Ready for Processing</h2>
+                    <p class="text-slate-400 text-sm max-w-xs mx-auto">
+                        Your analysis results will appear here after document validation.
+                    </p>
+                </div>
+
+                <!-- Analysis View -->
+                <div id="results-view" class="hidden space-y-6">
+                    
+                    <div class="pro-panel rounded-2xl p-8 flex flex-col items-center md:flex-row gap-10">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="64" cy="64" r="58" stroke="#f1f5f9" stroke-width="6" fill="transparent" />
+                                <circle id="score-circle-progress" cx="64" cy="64" r="58" stroke="#000000" stroke-width="6" fill="transparent" stroke-dasharray="364.4" stroke-dashoffset="364.4" class="score-circle" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="score-number" class="text-3xl font-bold">0%</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h2 class="text-xl font-bold mb-1 tracking-tight">Match Intelligence</h2>
+                            <p id="match-label" class="text-slate-500 text-sm mb-4">Metric calculation pending...</p>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                                <button onclick="window.print()" class="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors">
+                                    <i class="fa-solid fa-print mr-2"></i> Print Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vertical Stacking of Results -->
+                    <div class="flex flex-col gap-6">
+                        <!-- Strengths Card -->
+                        <div class="pro-panel rounded-2xl p-6">
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Strengths</h4>
+                            <div id="strengths-list" class="space-y-3 text-sm text-slate-700"></div>
+                        </div>
+                        <!-- Gaps Card -->
+                        <div class="pro-panel rounded-2xl p-6">
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Gaps Found</h4>
+                            <div id="improvements-list" class="space-y-3 text-sm text-slate-700"></div>
+                        </div>
+                    </div>
+
+                    <!-- Strategic Advice Card -->
+                    <div class="pro-panel rounded-2xl p-8 border-t-4 border-t-black">
+                        <h4 class="text-sm font-bold mb-4 uppercase tracking-widest text-black flex items-center gap-3">
+                            Strategic Advice
+                        </h4>
+                        <p id="recommendation-text" class="text-slate-600 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Error Box -->
+                <div id="error-view" class="hidden pro-panel rounded-2xl p-8 border-red-100 bg-red-50/30 text-center">
+                    <i class="fa-solid fa-circle-exclamation text-red-400 text-3xl mb-4"></i>
+                    <h3 class="text-lg font-bold">Processing Error</h3>
+                    <p id="error-text" class="text-slate-500 text-sm mt-2 mb-6"></p>
+                    <button onclick="resetUI()" class="text-xs font-bold text-black underline underline-offset-4">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const resumeInput = document.getElementById('resume-input');
+        const jdInput = document.getElementById('jd-input');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const dropZone = document.getElementById('drop-zone');
+        const dropZoneContent = document.getElementById('drop-zone-content');
+        const fileName = document.getElementById('file-name');
+        
+        const views = {
+            placeholder: document.getElementById('placeholder-view'),
+            results: document.getElementById('results-view'),
+            error: document.getElementById('error-view')
+        };
+
+        const scoreCircle = document.getElementById('score-circle-progress');
+        const scoreNumber = document.getElementById('score-number');
+        const matchLabel = document.getElementById('match-label');
+        const strengthsList = document.getElementById('strengths-list');
+        const improvementsList = document.getElementById('improvements-list');
+        const recommendationText = document.getElementById('recommendation-text');
+        
+        const steps = [
+            document.getElementById('step-1-circle'),
+            document.getElementById('step-2-circle'),
+            document.getElementById('step-3-circle')
+        ];
+
+        const setStep = (num) => {
+            steps.forEach((s, i) => {
+                if (i <= num) {
+                    s.classList.replace('step-inactive', 'step-active');
+                    if (i < num) s.innerHTML = '<i class="fa-solid fa-check text-[10px]"></i>';
+                } else {
+                    s.classList.replace('step-active', 'step-inactive');
+                    s.innerHTML = `<i class="fa-solid fa-${i+1} text-[10px]"></i>`;
+                }
+            });
+        };
+
+        const updateScore = (percent) => {
+            const circumference = 364.4;
+            const offset = circumference - (percent / 100) * circumference;
+            scoreCircle.style.strokeDashoffset = offset;
+            
+            let current = 0;
+            const interval = setInterval(() => {
+                if (current >= percent) {
+                    clearInterval(interval);
+                    scoreNumber.textContent = percent + '%';
+                } else {
+                    current++;
+                    scoreNumber.textContent = current + '%';
+                }
+            }, 10);
+
+            matchLabel.textContent = percent > 75 ? "Excellent alignment for this profile." : "Moderate alignment. Resume requires tuning.";
+        };
+
+        // File Selection logic
+        dropZone.addEventListener('click', () => resumeInput.click());
+        resumeInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Drag and Drop functionality
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZoneContent.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZoneContent.classList.remove('drag-over');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/pdf') {
+                    resumeInput.files = files; 
+                    fileName.textContent = file.name;
+                    fileName.classList.add('text-black');
+                    setStep(0);
+                } else {
+                    alert("Please upload a PDF file.");
+                }
+            }
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            const resumeFile = resumeInput.files[0];
+            let jd = jdInput.value.trim();
+
+            if (!resumeFile) {
+                alert("Please upload your resume to proceed.");
+                return;
+            }
+
+            if (!jd) {
+                jd = "General Resume Review and Professional Optimization (No specific job description provided)";
+            }
+
+            setStep(1);
+            document.getElementById('btn-text').textContent = "Processing...";
+            document.getElementById('btn-loader').classList.remove('hidden');
+            analyzeBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('resume', resumeFile);
+            formData.append('job_description', jd);
+
+            try {
+                const response = await fetch('http://localhost:8080/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) displayResults(data.ats_result);
+                else showError(data.error);
+            } catch (err) {
+                showError("Connection failed. Ensure backend is running.");
+            } finally {
+                document.getElementById('btn-text').textContent = "Refresh Analysis";
+                document.getElementById('btn-loader').classList.add('hidden');
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        function displayResults(rawText) {
+            views.placeholder.classList.add('hidden');
+            views.error.classList.add('hidden');
+            views.results.classList.remove('hidden');
+            setStep(2);
+
+            const scoreMatch = rawText.match(/ATS Match:\s*(\d+)%/i);
+            const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+            updateScore(score);
+            
+            const strengthsPart = rawText.split(/Strengths:|Improvement Suggestions:|Rules:/i)[1] || "";
+            const improvementsPart = rawText.split(/Improvement Suggestions:|Rules:/i)[1] || "";
+
+            strengthsList.innerHTML = strengthsPart.split('\n')
+                .filter(l => l.trim().length > 3)
+                .map(l => `<div class="flex gap-2"><i class="fa-solid fa-minus mt-1.5 text-slate-300"></i><span>${l.replace(/^[-*•]\s*/, '')}</span></div>`).join('');
+
+            improvementsList.innerHTML = improvementsPart.split('\n')
+                .filter(l => l.trim().length > 3)
+                .map(l => `<div class="flex gap-2"><i class="fa-solid fa-plus mt-1.5 text-slate-300"></i><span>${l.replace(/^[-*•]\s*/, '')}</span></div>`).join('');
+
+            recommendationText.textContent = rawText.length > 300 ? "Optimization Strategy: Prioritize incorporating missing technical keywords identified in the gaps section. Ensure quantifiable results (percentages, revenue, time saved) are present for all past experiences to improve ATS extraction quality." : "Review the strengths and gaps above to iterate on your document.";
+
+            // Activate and Darken the New Scan Button
+            const newScanBtn = document.getElementById('new-scan-btn');
+            newScanBtn.disabled = false;
+            newScanBtn.classList.remove('text-slate-300', 'border-slate-100', 'cursor-not-allowed', 'bg-slate-50/50');
+            newScanBtn.classList.add('bg-black', 'text-white', 'border-black', 'hover:bg-slate-800', 'shadow-md');
+        }
+
+        function showError(msg) {
+            views.placeholder.classList.add('hidden');
+            views.results.classList.add('hidden');
+            views.error.classList.remove('hidden');
+            document.getElementById('error-text').textContent = msg;
+        }
+
+        function resetUI() {
+            views.placeholder.classList.remove('hidden');
+            views.error.classList.add('hidden');
+            views.results.classList.add('hidden');
+            resumeInput.value = "";
+            jdInput.value = "";
+            fileName.textContent = "Drag or click for PDF";
+            fileName.classList.remove('text-black');
+            setStep(0);
+
+            // Revert New Scan Button to inactive Grey
+            const newScanBtn = document.getElementById('new-scan-btn');
+            newScanBtn.disabled = true;
+            newScanBtn.classList.add('text-slate-300', 'border-slate-100', 'cursor-not-allowed', 'bg-slate-50/50');
+            newScanBtn.classList.remove('bg-black', 'text-white', 'border-black', 'hover:bg-slate-800', 'shadow-md');
+        }
+    </script>
+</body>
+</html>
